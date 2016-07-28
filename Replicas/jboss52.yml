@@ -1,0 +1,22 @@
+---
+- hosts: jboss52
+  remote_user: jboss
+  tasks:
+  - name: Create a tar archive
+    shell: tar --exclude="/home/jboss/jboss52/./server/sri/log" --exclude="/home/jboss/jboss52/./server/sri/deploy/*-ds.xml" --exclude="/home/jboss/jboss52/./server/sri/tmp" --exclude="/home/jboss/jboss52/./server/sri/data" -cvzf /tmp/jboss-{{ ansible_hostname }}-j52.tar.gz /home/jboss/jboss52/. 
+  - name: Get File to publish
+    fetch: src=/tmp/jboss-{{ ansible_hostname }}-j52.tar.gz dest=/var/www/html/jboss/{{ ansible_hostname }}/ flat=yes
+  - name: Delete origin files
+    shell: rm -f /tmp/jboss-{{ ansible_hostname }}-j52.tar.gz  
+  - name: Select Config File to publish
+    shell: (cd /home/jboss/jboss52/server/sri/deploy ; ls *-ds.xml )
+    register: files_to_copy
+  - name: Get Config File to publish
+    fetch: src=/home/jboss/jboss52/server/sri/deploy/{{ item }} dest=/tmp/
+    with_items: files_to_copy.stdout_lines
+  - name: Fetch login-config
+    fetch: src=/home/jboss/jboss52/server/sri/conf/login-config.xml dest=/tmp/
+  - name: Change Passwords
+    local_action: shell sh /root/bin/chagepasswd52.sh /tmp/{{ ansible_hostname }}/home/jboss/jboss52/server/sri/deploy/
+  - name: Delete Temp File
+    local_action: shell rm -rf /tmp/{{ ansible_hostname }}

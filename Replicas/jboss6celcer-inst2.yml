@@ -1,0 +1,18 @@
+---
+- hosts: jboss6celcer2
+  remote_user: jboss
+  vars:
+    config_file: standalone-full.xml
+  tasks:
+  - name: Create a tar archive
+    shell: tar --exclude="/home/jboss/jboss6inst2/./nohup.out" --exclude="/home/jboss/jboss6inst2/./standalone/log" --exclude="/home/jboss/jboss6inst2/./standalone/configuration/standalone*" --exclude="/home/jboss/jboss6inst2/./standalone/tmp" --exclude="/home/jboss/jboss6inst2/./standalone/data" -cvzf /tmp/jboss-inst2-{{ ansible_hostname }}.tar.gz /home/jboss/jboss6inst2/. 
+  - name: Get File to publish
+    fetch: src=/tmp/jboss-inst2-{{ ansible_hostname }}.tar.gz dest=/var/www/html/jboss/{{ ansible_hostname }}-inst2/ flat=yes
+  - name: Delete origin files
+    shell: rm -f /tmp/jboss-{{ ansible_hostname }}.tar.gz  
+  - name: Get File to publish
+    fetch: src=/home/jboss/jboss6inst2/standalone/configuration/{{ config_file }} dest=/var/www/html/jboss/{{ ansible_hostname }}-inst2/standalone-full.xml flat=yes
+  - name: Delete origin passwords
+    local_action: shell /root/bin/chagepasswd6.sh /var/www/html/jboss/{{ ansible_hostname }}-inst2 standalone-full.xml
+
+      

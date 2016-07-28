@@ -1,0 +1,13 @@
+---
+- hosts: webcel
+  become: yes
+  become_method: sudo
+  remote_user: eair010915
+  vars:
+    newuser: replica
+    password: HB^3Io@qU$ 
+  tasks:
+  - name: adduser
+    shell: adduser -g 100 -c "Usuario Replica" {{ newuser }}
+  - name: changepassword
+    shell: echo {{ password }} | passwd {{ newuser }} --stdin

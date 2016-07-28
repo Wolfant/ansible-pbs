@@ -1,0 +1,8 @@
+---
+- hosts: webcel
+  remote_user: eair010915
+  become: yes
+  become_method: sudo
+  tasks:
+  - name: Get File to publish
+    fetch: src=/var/log/httpd/server-status.log20160612 dest=/var/monitoreo/{{ ansible_hostname }}/  flat=yes  fail_on_missing=yes

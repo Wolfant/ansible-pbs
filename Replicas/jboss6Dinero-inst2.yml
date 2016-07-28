@@ -1,0 +1,16 @@
+---
+- hosts: jboss6Dinero
+  remote_user: jboss
+  vars:
+    config_file: standalone-full.xml
+  tasks:
+  - name: Create a tar archive
+    shell: tar  --exclude="/home/jboss/DevTuristasExtranjeros/./nohup.out" --exclude="/home/jboss/DevTuristasExtranjeros/./standalone/log" --exclude="/home/jboss/DevTuristasExtranjeros/./standalone/configuration/standalone*" --exclude="/home/jboss/DevTuristasExtranjeros/./standalone/tmp" --exclude="/home/jboss/DevTuristasExtranjeros/./standalone/data" -cvzf /tmp/jbossDevIvaTur-{{ ansible_hostname }}.tar.gz /home/jboss/DevTuristasExtranjeros/. 
+  - name: Get File to publish
+    fetch: src=/tmp/jbossDevIvaTur-{{ ansible_hostname }}.tar.gz dest=/var/www/html/jboss/  
+  - name: Delete origin files
+    shell: rm -f /tmp/jbossDevIvaTur-{{ ansible_hostname }}.tar.gz  
+  - name: Get Config File to publish
+    fetch: src=/home/jboss/DevTuristasExtranjeros/standalone/configuration/{{ config_file }} dest=/var/www/html/jboss/{{ ansible_hostname }}/standalone-full-jbossDevIvaTur.xml flat=yes
+  - name: Delete origin passwords
+    local_action: shell /root/bin/chagepasswd6.sh /var/www/html/jboss/{{ ansible_hostname }} standalone-full-jbossDevIvaTur.xml

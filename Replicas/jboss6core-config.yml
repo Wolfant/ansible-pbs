@@ -1,0 +1,12 @@
+---
+- hosts: jboss6core
+  remote_user: jboss
+  vars:
+    config_file: standalone-full.xml  
+  tasks:
+  - name: Get File to publish
+    fetch: src=/home/jboss/jboss6/standalone/configuration/{{ config_file }} dest=/var/www/html/jboss/{{ ansible_hostname }}/standalone-full.xml flat=yes
+  - name: Deltete origin passwords
+    run_once: true
+    local_action: shell /root/bin/chagepasswd6.sh /var/www/html/jboss/{{ ansible_hostname }}/
+      

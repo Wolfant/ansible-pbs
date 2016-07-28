@@ -1,0 +1,24 @@
+---
+- hosts: sriinternet03
+  remote_user: jboss
+  tasks:
+  - name: Create a tar archive
+    shell: tar --exclude="/home/jboss/jboss43/./bin/gc.log" --exclude="/home/jboss/jboss43/./server/sri_te" --exclude="/home/jboss/jboss43/./server/sri/log" --exclude="/home/jboss/jboss43/./server/sri/deploy/*-ds.xml" --exclude="/home/jboss/jboss43/./server/sri/tmp" --exclude="/home/jboss/jboss43/./server/sri/data" -cvzf /tmp/jboss-{{ ansible_hostname }}.tar.gz /home/jboss/jboss43/. 
+  - name: Get File to publish
+    fetch: src=/tmp/jboss-{{ ansible_hostname }}.tar.gz dest=/var/www/html/jboss/{{ ansible_hostname }}/ flat=yes
+  - name: Delete origin files
+    shell: rm -f /tmp/jboss-{{ ansible_hostname }}.tar.gz  
+  - name: Select Config File to publish
+    shell: (cd /home/jboss/jboss43/server/sri/deploy ; ls *-ds.xml )
+    register: files_to_copy
+  - name: Get Config File to publish
+    fetch: src=/home/jboss/jboss43/server/sri/deploy/{{ item }} dest=/tmp/
+    with_items: files_to_copy.stdout_lines
+  - name: Fetch login-config
+    fetch: src=/home/jboss/jboss43/server/sri/conf/login-config.xml dest=/tmp/
+  - name: Change Passwords
+    local_action: shell sh /root/bin/chagepasswd43.sh /tmp/{{ ansible_hostname }}/home/jboss/jboss43/server/sri/deploy/
+  - name: Clear TMP Folder
+    local_action: shell rm -rf /tmp/{{ ansible_hostname }}
+
+      

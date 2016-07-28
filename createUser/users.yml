@@ -1,0 +1,58 @@
+---
+grupos:
+  sisop:
+  app:  
+  oper:
+  others: 
+        
+users:
+  user1:
+    name: user1
+    group: sisop
+    password: user1
+    comment: 'Test User'
+  user2:
+    name: user2
+    group: sisop
+    password: user2
+    comment: 'Test User'
+  user3:
+    name: user3
+    group: sisop
+    password: user3
+    comment: 'Test User'
+  user4:
+    name: user4
+    group: sisop
+    password: user4
+    comment: 'Test User'
+  user5:
+    name: user5
+    group: app
+    password: user5
+    comment: 'Test User'
+  user6: 
+    name: user6 
+    group: app
+    password: user6 
+    comment: 'Test User'
+  user7: 
+    name: user7
+    group: app
+    password: user7
+    comment: 'Test User'
+  user8:
+    name: user8
+    group: oper
+    password: user8
+    comment: 'Test User'
+  user9:
+    name: user9
+    group: oper
+    password: user9
+    comment: 'Test User'
+  user10:
+    name: user10
+    group: oper
+    password: user10
+    comment: 'Test User'

@@ -1,0 +1,14 @@
+---
+- hosts: jboss43core
+  remote_user: jboss
+  tasks:
+  - name: Select Config File to publish
+    shell: (cd /home/jboss/jboss43/server/sri/deploy ; ls *-ds.xml )
+    register: files_to_copy
+  - name: Get Config File to publish
+    fetch: src=/home/jboss/jboss43/server/sri/deploy/{{ item }} dest=/tmp/
+    with_items: files_to_copy.stdout_lines
+  - name: Fetch login-config  
+    fetch: src=/home/jboss/jboss43/server/sri/conf/login-config.xml dest=/tmp/
+  - name: Change Passwords
+    local_action: shell sh /root/bin/chagepasswd43.sh /tmp/{{ ansible_hostname }}/home/jboss/jboss43/server/sri/deploy/

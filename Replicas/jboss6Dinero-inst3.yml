@@ -1,0 +1,16 @@
+---
+- hosts: jboss6Dinero
+  remote_user: jboss
+  vars:
+    config_file: standalone-full.xml
+  tasks:
+  - name: Create a tar archive
+    shell: tar  --exclude="/home/jboss/ChatEnLinea/./nohup.out" --exclude="/home/jboss/ChatEnLinea/./standalone/log" --exclude="/home/jboss/ChatEnLinea/./standalone/configuration/standalone*" --exclude="/home/jboss/ChatEnLinea/./standalone/tmp" --exclude="/home/jboss/ChatEnLinea/./standalone/data" -cvzf /tmp/jbossChat-{{ ansible_hostname }}.tar.gz /home/jboss/ChatEnLinea/. 
+  - name: Get File to publish
+    fetch: src=/tmp/jbossChat-{{ ansible_hostname }}.tar.gz dest=/var/www/html/jboss/  
+  - name: Delete origin files
+    shell: rm -f /tmp/jbossChat-{{ ansible_hostname }}.tar.gz  
+  - name: Get Config File to publish
+    fetch: src=/home/jboss/ChatEnLinea/standalone/configuration/{{ config_file }} dest=/var/www/html/jboss/{{ ansible_hostname }}/standalone-full-jbossChat.xml flat=yes
+  - name: Delete origin passwords
+    local_action: shell /root/bin/chagepasswd6.sh /var/www/html/jboss/{{ ansible_hostname }} standalone-full-jbossChat.xml

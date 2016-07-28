@@ -1,0 +1,10 @@
+---
+- hosts: webcel
+  remote_user: replica
+  tasks:
+  - name: Create a tar archive
+    shell: tar --exclude="/etc/httpd/logs" --exclude="/etc/httpd/run" -h -cvzf /tmp/apache-{{ ansible_hostname }}.tar.gz /etc/httpd/ 
+  - name: Get File to publish
+    fetch: src=/tmp/apache-{{ ansible_hostname }}.tar.gz dest=/var/www/html/Apache/  
+  - name: Delete origin files
+    shell: rm -f /tmp/apache-{{ ansible_hostname }}.tar.gz  
